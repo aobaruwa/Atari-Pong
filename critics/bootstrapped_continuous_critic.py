@@ -1,6 +1,6 @@
 from .base_critic import BaseCritic
 import tensorflow as tf
-from cs285.infrastructure.tf_utils import build_mlp
+from infrastructure.tf_utils import build_mlp
 
 
 class BootstrappedContinuousCritic(BaseCritic):
@@ -19,29 +19,9 @@ class BootstrappedContinuousCritic(BaseCritic):
         self._build()
 
     def _build(self):
-        """
-            Notes on notation:
-
-            Symbolic variables have the prefix sy_, to distinguish them from the numerical values
-            that are computed later in the function
-
-            Prefixes and suffixes:
-            ob - observation
-            ac - action
-            _no - this tensor should have shape (batch self.size /n/, observation dim)
-            _na - this tensor should have shape (batch self.size /n/, action dim)
-            _n  - this tensor should have shape (batch self.size /n/)
-
-            Note: batch self.size /n/ is defined at runtime, and until then, the shape for that axis
-            is None
-
-            ----------------------------------------------------------------------------------
-            loss: a function of self.sy_ob_no, self.sy_ac_na and self.sy_adv_n that we will differentiate
-                to get the policy gradient.
-        """
+        
         self.sy_ob_no, self.sy_ac_na, self.sy_adv_n = self.define_placeholders()
 
-        # define the critic
         self.critic_prediction = tf.squeeze(build_mlp(
             self.sy_ob_no,
             1,
@@ -49,20 +29,15 @@ class BootstrappedContinuousCritic(BaseCritic):
             n_layers=self.n_layers,
             size=self.size))
         self.sy_target_n = tf.placeholder(shape=[None], name="critic_target", dtype=tf.float32)
-
-        # TODO: set up the critic loss
-        # HINT1: the critic_prediction should regress onto the targets placeholder (sy_target_n)
-        # HINT2: use tf.losses.mean_squared_error
         self.critic_loss = tf.losses.mean_squared_error(self.sy_target_n, self.critic_prediction)
 
-        # TODO: use the AdamOptimizer to optimize the loss defined above
         self.critic_update_op = tf.train.AdamOptimizer(self.learning_rate).minimize(self.critic_loss)
 
     def define_placeholders(self):
         """
             Placeholders for batch batch observations / actions / advantages in actor critic
             loss function.
-            See Agent.build_computation_graph for notation
+
 
             returns:
                 sy_ob_no: placeholder for observations
@@ -78,8 +53,7 @@ class BootstrappedContinuousCritic(BaseCritic):
         return sy_ob_no, sy_ac_na, sy_adv_n
 
     def forward(self, ob):
-        # TODO: run your critic
-        # HINT: there's a neural network structure defined above with mlp layers, which serves as your 'critic'
+      
         return self.sess.run(self.critic_prediction, feed_dict={self.sy_ob_no: ob})
 
     def update(self, ob_no, next_ob_no, re_n, terminal_n):
@@ -101,22 +75,7 @@ class BootstrappedContinuousCritic(BaseCritic):
                 loss
         """
 
-        # TODO: Implement the pseudocode below:
 
-        # do the following (self.num_grad_steps_per_target_update * self.num_target_updates) times:
-            # every self.num_grad_steps_per_target_update steps (which includes the first step),
-                # recompute the target values by
-                    #a) calculating V(s') by querying this critic network (ie calling 'forward') with next_ob_no
-                    #b) and computing the target values as r(s, a) + gamma * V(s')
-                # HINT: don't forget to use terminal_n to cut off the V(s') (ie set it to 0) when a terminal state is reached
-            # every time,
-                # update this critic using the observations and targets
-                # HINT1: need to sess.run the following:
-                    #a) critic_update_op
-                    #b) critic_loss
-                # HINT2: need to populate the following (in the feed_dict):
-                    #a) sy_ob_no with ob_no
-                    #b) sy_target_n with target values calculated above
 
         for _ in range(self.num_target_updates):
             critic = self.forward(next_ob_no)
