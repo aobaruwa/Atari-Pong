@@ -1,5 +1,5 @@
 """This file includes a collection of utility functions that are useful for
-""" Implementing DQN."""
+ implementing DQN."""
 import random
 from collections import namedtuple
 
