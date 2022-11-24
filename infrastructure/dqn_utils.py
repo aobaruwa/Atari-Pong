@@ -1,5 +1,5 @@
 """This file includes a collection of utility functions that are useful for
-implementing DQN."""
+""" Implementing DQN."""
 import random
 from collections import namedtuple
 
@@ -8,7 +8,7 @@ import numpy as np
 import tensorflow as tf
 import tensorflow.contrib.layers as layers
 
-from cs285.infrastructure.atari_wrappers import wrap_deepmind
+from infrastructure.atari_wrappers import wrap_deepmind
 
 OptimizerSpec = namedtuple("OptimizerSpec", ["constructor", "kwargs", "lr_schedule"])
 
