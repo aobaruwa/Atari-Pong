@@ -1,5 +1,5 @@
 # Atari-Pong
-Self playing Atari Pong agent beats the computer. Trained with Deep Q-networks. 
+Self playing Atari Pong agent beats the computer. Trained with Deep Q-network. 
 
 ---
 
