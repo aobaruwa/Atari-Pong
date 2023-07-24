@@ -7,4 +7,4 @@ Self playing Atari Pong agent beats the computer. Trained with Deep Q-network.
 
 ---
 
-Adapted from Berkely Robotic AI & Learning Lab (RAIL) course project CS 285. 
+
